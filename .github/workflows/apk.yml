@@ -18,11 +18,17 @@ jobs:
       - name: Unzip app
         run: mkdir www _tmp && unzip -q ./*.zip -d _tmp && cp -r "$(dirname "$(find _tmp -name index.html | head -1)")"/. www/
       - name: Install Capacitor
-        run: npm init -y && npm i @capacitor/core@7 @capacitor/cli@7 @capacitor/android@7 @capacitor/local-notifications@7 @capacitor/assets@3
+        run: npm init -y && npm i --legacy-peer-deps @capacitor/core@7 @capacitor/cli@7 @capacitor/android@7 @capacitor/local-notifications@7 @capacitor/assets@3 @capacitor-community/background-geolocation
       - name: Config
         run: echo '{"appId":"com.carnotebook.app","appName":"دفتر السيارة","webDir":"www"}' > capacitor.config.json
       - name: Add Android
         run: npx cap add android
+      - name: Permissions
+        run: |
+          M=android/app/src/main/AndroidManifest.xml
+          for P in ACCESS_COARSE_LOCATION ACCESS_FINE_LOCATION FOREGROUND_SERVICE FOREGROUND_SERVICE_LOCATION WAKE_LOCK; do
+            sed -i "s#</manifest>#    <uses-permission android:name=\"android.permission.$P\" />\n</manifest>#" $M
+          done
       - name: Icons
         continue-on-error: true
         run: mkdir assets && cp www/icons/icon-only.png www/icons/icon-foreground.png www/icons/icon-background.png assets/ && npx capacitor-assets generate --android
