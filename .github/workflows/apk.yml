@@ -18,11 +18,16 @@ jobs:
       - name: Unzip app
         run: mkdir www _tmp && unzip -q ./*.zip -d _tmp && cp -r "$(dirname "$(find _tmp -name index.html | head -1)")"/. www/
       - name: Install Capacitor
-        run: npm init -y && npm i @capacitor/core@7 @capacitor/cli@7 @capacitor/android@7
+        run: npm init -y && npm i @capacitor/core@7 @capacitor/cli@7 @capacitor/android@7 @capacitor/local-notifications@7 @capacitor/assets@3
       - name: Config
         run: echo '{"appId":"com.carnotebook.app","appName":"دفتر السيارة","webDir":"www"}' > capacitor.config.json
       - name: Add Android
-        run: npx cap add android && npx cap sync android
+        run: npx cap add android
+      - name: Icons
+        continue-on-error: true
+        run: mkdir assets && cp www/icons/icon-only.png www/icons/icon-foreground.png www/icons/icon-background.png assets/ && npx capacitor-assets generate --android
+      - name: Sync
+        run: npx cap sync android
       - name: Build
         run: cd android && chmod +x gradlew && ./gradlew assembleDebug
       - uses: actions/upload-artifact@v4
