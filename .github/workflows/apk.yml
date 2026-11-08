@@ -18,7 +18,7 @@ jobs:
       - name: Unzip app
         run: mkdir www _tmp && unzip -q ./*.zip -d _tmp && cp -r "$(dirname "$(find _tmp -name index.html | head -1)")"/. www/
       - name: Install Capacitor
-        run: npm init -y && npm i --legacy-peer-deps @capacitor/core@7 @capacitor/cli@7 @capacitor/android@7 @capacitor/local-notifications@7 @capacitor/assets@3 @capacitor-community/background-geolocation
+        run: npm init -y && npm i --legacy-peer-deps @capacitor/core@7 @capacitor/cli@7 @capacitor/android@7 @capacitor/local-notifications@7 @capacitor/assets@3 @capacitor/filesystem@7 @capacitor/share@7 @capacitor-community/background-geolocation
       - name: Config
         run: echo '{"appId":"com.carnotebook.app","appName":"دفتر السيارة","webDir":"www"}' > capacitor.config.json
       - name: Add Android
