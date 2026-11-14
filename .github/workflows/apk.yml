@@ -17,8 +17,10 @@ jobs:
           java-version: 21
       - name: Unzip app
         run: mkdir www _tmp && unzip -q ./*.zip -d _tmp && cp -r "$(dirname "$(find _tmp -name index.html | head -1)")"/. www/
+      - name: Set referral server URL
+        run: sed -i "s#REF_URL=''#REF_URL='${{ vars.REF_URL }}'#" www/index.html
       - name: Install Capacitor
-        run: npm init -y && npm i --legacy-peer-deps @capacitor/core@7 @capacitor/cli@7 @capacitor/android@7 @capacitor/local-notifications@7 @capacitor/assets@3 @capacitor/filesystem@7 @capacitor/share@7 @capacitor-community/background-geolocation
+        run: npm init -y && npm i --legacy-peer-deps @capacitor/core@7 @capacitor/cli@7 @capacitor/android@7 @capacitor/local-notifications@7 @capacitor/assets@3 @capacitor/filesystem@7 @capacitor/share@7 @capacitor/geolocation@7 @capacitor-community/background-geolocation
       - name: Config
         run: echo '{"appId":"com.carnotebook.app","appName":"دفتر السيارة","webDir":"www"}' > capacitor.config.json
       - name: Add Android
@@ -34,6 +36,8 @@ jobs:
         run: mkdir assets && cp www/icons/icon-only.png www/icons/icon-foreground.png www/icons/icon-background.png assets/ && npx capacitor-assets generate --android
       - name: Sync
         run: npx cap sync android
+      - name: Signing key
+        run: mkdir -p ~/.android && ([ -f debug.keystore ] && cp debug.keystore ~/.android/debug.keystore || true)
       - name: Build
         run: cd android && chmod +x gradlew && ./gradlew assembleDebug
       - uses: actions/upload-artifact@v4
