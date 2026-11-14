@@ -17,6 +17,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Unzip app
         run: mkdir _site _tmp && unzip -q ./*.zip -d _tmp && cp -r "$(dirname "$(find _tmp -name index.html | head -1)")"/. _site/
+      - name: Set referral server URL
+        run: sed -i "s#REF_URL=''#REF_URL='${{ vars.REF_URL }}'#" _site/index.html
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
